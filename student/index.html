@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Login & Registration with Authentication</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        * {box-sizing: border-box; margin: 0; padding: 0;}
+        body {
+            height: 100vh;
+            background: linear-gradient(135deg, #6e45e2, #88d3ce);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            width: 350px;
+            text-align: center;
+            transition: transform 0.5s ease;
+            position: relative;
+        }
+        h2 {margin-bottom: 20px; font-family: 'Pacifico', cursive; color: #fff;}
+        input {
+            width: 100%;
+            margin: 10px 0;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+        }
+        input::placeholder {color: #eee;}
+        button {
+            width: 100%;
+            margin-top: 15px;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: #6e45e2;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        button:hover {background: #4b2cb3;}
+        .toggle-btn {
+            margin-top: 20px;
+            cursor: pointer;
+            text-decoration: underline;
+            transition: color 0.3s;
+        }
+        .toggle-btn:hover {color: #ffd700;}
+        .success-popup {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4CAF50;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: none;
+            animation: fadeOut 3s forwards;
+            z-index: 10;
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="formContainer">
+        <h2>Welcome to Exam Portal</h2>
+        <div class="success-popup" id="successPopup">Registration Successful!</div>
+        <div id="loginBox">
+            <input type="text" placeholder="Username" id="loginUsername">
+            <input type="password" placeholder="Password" id="loginPassword">
+            <button onclick="login()">Login</button>
+            <div class="toggle-btn" onclick="toggleForm()">New user? Register here</div>
+        </div>
+        <div id="registerBox" style="display:none;">
+            <input type="text" placeholder="Full Name" id="regFullName">
+            <input type="text" placeholder="Username" id="regUsername">
+            <input type="email" placeholder="Email" id="regEmail">
+            <input type="text" placeholder="Phone Number" id="regPhone">
+            <input type="password" placeholder="Password" id="regPassword">
+            <button onclick="register()">Register</button>
+            <div class="toggle-btn" onclick="toggleForm()">Already registered? Login here</div>
+        </div>
+    </div>
+
+    <script>
+        function toggleForm() {
+            const loginBox = document.getElementById('loginBox');
+            const registerBox = document.getElementById('registerBox');
+            loginBox.style.display = loginBox.style.display === 'none' ? 'block' : 'none';
+            registerBox.style.display = registerBox.style.display === 'none' ? 'block' : 'none';
+            gsap.from('.container', {scale: 0.5, opacity: 0, duration: 0.5});
+        }
+
+        function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            const user = JSON.parse(localStorage.getItem(username));
+            if (user && user.password === password) {
+                alert(`Welcome back, ${username}!`);
+                window.location.href = 'student_dashboard.html';
+            } else {
+                alert('Invalid username or password.');
+            }
+        }
+
+        function register() {
+            const fullName = document.getElementById('regFullName').value;
+            const username = document.getElementById('regUsername').value;
+            const email = document.getElementById('regEmail').value;
+            const phone = document.getElementById('regPhone').value;
+            const password = document.getElementById('regPassword').value;
+
+            if (!fullName || !username || !email || !phone || !password) {
+                alert('Please fill out all fields.');
+                return;
+            }
+
+            if (localStorage.getItem(username)) {
+                alert('Username already exists. Choose a different username.');
+                return;
+            }
+
+            const user = { fullName, username, email, phone, password };
+            localStorage.setItem(username, JSON.stringify(user));
+
+            const popup = document.getElementById('successPopup');
+            popup.style.display = 'block';
+            gsap.from(popup, {y: -30, opacity: 0, duration: 1});
+            setTimeout(() => { popup.style.display = 'none'; }, 3000);
+
+            toggleForm();
+        }
+
+        gsap.from('.container', {y: -50, opacity: 0, duration: 1, ease: 'bounce'});
+    </script>
+</body>
+</html>
